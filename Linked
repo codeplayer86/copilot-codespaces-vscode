@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscreen Iframe with Escape</title>
+    <style>
+        html, body {
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .iframe-container {
+            height: 100vh; 
+            width: 100vw; 
+            display: none; /* Hide initially */
+        }
+        iframe {
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+        }
+        .input-container {
+            padding: 10px; 
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        input[type="text"] {
+            width: 80%; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+        }
+        button {
+            padding: 10px 15px; 
+            margin-left: 10px; 
+            border: none; 
+            background-color: #007BFF; 
+            color: white; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        button:hover {
+            background-color: #0056b3; 
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <input type="text" id="urlInput" placeholder="Enter URL here (e.g., https://unblocked-games.s3.amazonaws.com/ovo.html) ANYTHING YOU DO HERE WILL NOT SHOW IN YOUR HISTORY" onkeypress="checkEnter(event)">
+        <button onclick="loadUrl()">Load URL</button>
+    </div>
+    <div class="iframe-container" id="iframeContainer">
+        <iframe id="myIframe" src=""></iframe>
+    </div>
+
+    <script>
+        function loadUrl() {
+            const urlInput = document.getElementById('urlInput');
+            const iframe = document.getElementById('myIframe');
+            
+            // Validate URL and update iframe src  
+            if (urlInput.value) {
+                iframe.src = urlInput.value.startsWith('http://') || urlInput.value.startsWith('https://') ? urlInput.value : 'https://' + urlInput.value;
+                makeFullscreen();
+            } else {
+                alert('Please enter a valid URL.');
+            }
+        }
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') {
+                loadUrl();
+            }
+        }
+
+        function makeFullscreen() {
+          // Hide the input container  
+          document.querySelector('.input-container').style.display = 'none';
+          // Show the iframe container  
+          const iframeContainer = document.getElementById('iframeContainer');
+          iframeContainer.style.display = 'block';
+    
+          // Request fullscreen on the iframe itself  
+          const iframe = document.getElementById('myIframe');
+          if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+          } else if (iframe.mozRequestFullScreen) { // Firefox  
+            iframe.mozRequestFullScreen();
+          } else if (iframe.webkitRequestFullscreen) { // Chrome, Safari and Opera  
+            iframe.webkitRequestFullscreen();
+          } else if (iframe.msRequestFullscreen) { // IE/Edge  
+            iframe.msRequestFullscreen();
+          }
+
+          // Clear the input field  
+          document.getElementById('urlInput').value = '';
+
+          // Add event listener for Esc key  
+          document.addEventListener('keydown', handleKeyPress);
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Escape') {
+                closeFullscreen();
+            }
+        }
+
+        function closeFullscreen() {
+            const iframeContainer = document.getElementById('iframeContainer');
+            // Stop fullscreen mode  
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox  
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera  
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge  
+                document.msExitFullscreen();
+            }
+
+            // Show the input container again  
+            document.querySelector('.input-container').style.display = 'block';
+            // Hide the iframe container  
+            iframeContainer.style.display = 'none';
+            // Clear the iframe src  
+            document.getElementById('myIframe').src = '';
+            
+            // Clear the input field  
+            document.getElementById('urlInput').value = '';
+
+            // Remove event listener for Esc key  
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+    </script>
+</body>
+</html>
